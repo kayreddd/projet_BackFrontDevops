@@ -12,6 +12,8 @@ from showAccount import showAccount
 from addMoney import addMoney
 from transaction import create_transaction
 from transaction import updateTransaction
+from showTransaction import showTransaction
+
 
 
 
@@ -128,6 +130,16 @@ async def update_transaction_route():
     # Connexion à la base de données
     result = updateTransaction()
         
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    return result  # Renvoie le message de succès
+
+account_id = 1
+@app.post("/show_transaction")
+async def get_transaction():
+    # Connexion à la base de données
+    result = showTransaction(account_id)
     if "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
 

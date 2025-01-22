@@ -43,14 +43,34 @@ def updateTransaction():
         
         # Récupérer uniquement la première ligne correspondante
         cursor.execute("SELECT * FROM transaction2 WHERE type_transaction = 'pending'")
-        rows = cursor.fetchall()
-        for row in rows:
-            if row[1] == 1:
-                return row[1],
-            test = row[1],
-            return test # Retourner toute la ligne (tuple)
-        else:  # Si aucune ligne ne correspond
-            return {"message": "Aucune ligne trouvée avec 'pending'"}
+        transactions = cursor.fetchall()
+        for transaction in transactions:
+            cursor.execute("SELECT money FROM compte WHERE id = ?",(str(transaction[1])))
+            money_left = cursor.fetchone()
+            if (money_left[0] > transaction[4]):
+
+                left = money_left[0] - transaction[4] # soustraction du montant d'argent qui va être donné
+                
+                cursor.execute("UPDATE compte SET money = ? WHERE id = ?", (left, str(transaction[1])))
+                cursor.execute("SELECT money FROM compte WHERE id = ?",(str(transaction[2]))) # récupération de l'argent du receveur
+                money_done = cursor.fetchone()
+                done = money_done[0] + transaction[4]
+                cursor.execute("UPDATE compte SET money = ? WHERE id = ?", (done, str(transaction[2])))
+                cursor.execute("""
+                INSERT INTO historic (id_user, type_transaction, valeur_transaction) 
+                VALUES (?, ?, ?)
+                """, (str(transaction[1]), "envoie de l'argent vers", str(transaction[4])))
+                cursor.execute("""
+                INSERT INTO historic (id_user, type_transaction, valeur_transaction) 
+                VALUES (?, ?, ?)
+                """, (str(transaction[2]), "reçoit de l'argent de", str(transaction[4])))
+
+                cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("done", str(transaction[0])))
+                
+            else:
+                cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("no money", str(transaction[0])))
+        conn.commit()
+        return ("terminé sans accroc")
         
     except Exception as e:
         return {"error": str(e)}
