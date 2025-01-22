@@ -10,6 +10,9 @@ from createUser import create_user
 from showUser import showUser
 from showAccount import showAccount
 from addMoney import addMoney
+from transaction import create_transaction
+from transaction import updateTransaction
+
 
 
 app = FastAPI()
@@ -32,6 +35,13 @@ class CompteCreate(BaseModel):
 class UserCreate(BaseModel):
     mail: str
     password: str
+
+class transactionCreate(BaseModel):
+    montant: int
+    id_sender: int
+    id_receveur: int
+    statut: str
+    message: str
 
 # Route pour créer un compte
 @app.post("/create_account")
@@ -97,3 +107,28 @@ async def add_money_route(id_compte, montant):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.post("/create_transaction")
+async def create_transaction_route(transaction: transactionCreate):
+    try:
+        # Appeler la fonction create_account depuis createAccount.py
+        result = create_transaction(transaction)  # On passe l'objet CompteCreate
+
+        if "error" in result:
+            raise HTTPException(status_code=500, detail=result["error"])
+
+        return result  # Renvoie le message de succès
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/update_transaction")
+async def update_transaction_route():
+    # Connexion à la base de données
+    result = updateTransaction()
+        
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    return result  # Renvoie le message de succès

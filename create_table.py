@@ -6,18 +6,21 @@ conn = sqlite3.connect("my_database.db")
 # Créer un curseur pour exécuter des commandes SQL
 cursor = conn.cursor()
 
-# Commande SQL pour créer une table
+#Commande SQL pour créer une table
 cursor.execute("""
-CREATE TABLE historic (
+CREATE TABLE depot (
     id INTEGER PRIMARY KEY,
-    id_user INTEGER,
-    type_transaction VARCHAR,
-    valeur_transaction INTEGER    
+    id_receveur INTEGER,
+    valeur_transaction INTEGER,
+    
 )
 """)
+
+# cursor.execute('DROP TABLE IF EXISTS "transaction"')
+
 
 # Sauvegarder les changements et fermer la connexion
 conn.commit()
 conn.close()
 
-print("Table créée avec succès.")
+print("Table supprimé avec succès.")
