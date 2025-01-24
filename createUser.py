@@ -7,12 +7,8 @@ class UserCreate(BaseModel):
     mail: str
     password: str
 
-class CompteCreate(BaseModel):
-    money: int
-    id_user: int
-
 # Fonction pour créer un compte
-def create_user(user: UserCreate, compte: CompteCreate):
+def create_user(user: UserCreate):
     try:
          # Hasher le mot de passe
         hashed_password = hashpw(user.password.encode('utf-8'), gensalt()).decode('utf-8')
@@ -28,14 +24,12 @@ def create_user(user: UserCreate, compte: CompteCreate):
 
         user_id = cursor.lastrowid
 
-        
-        compte.id_user = 1
-        compte.money = 100
+        money = 100
 
         cursor.execute("""
         INSERT INTO compte (money, id_user, statut_compte) 
         VALUES (?, ?, ?)
-        """, (100, compte.id_user, "Principal"))
+        """, (100, user_id, "Principal"))
 
 
         # Sauvegarder les changements et fermer la connexion

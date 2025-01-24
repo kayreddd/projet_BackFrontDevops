@@ -71,10 +71,10 @@ async def create_account_route(compte: CompteCreate):
 
 # Route pour créer un user
 @app.post("/create_user")
-async def create_user_route(user: UserCreate, compte: CompteCreate):
+async def create_user_route(user: UserCreate):
     try:
         # Appeler la fonction create_account depuis createAccount.py
-        result = create_user(user, compte)  # On passe l'objet CompteCreate
+        result = create_user(user)  # On passe l'objet CompteCreate
 
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])

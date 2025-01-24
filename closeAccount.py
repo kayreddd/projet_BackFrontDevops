@@ -7,22 +7,16 @@ def close_account(account_id):
         cursor = conn.cursor()
 
         # Vérifier si le compte existe
-        cursor.execute("SELECT * FROM compte WHERE id = ?", (account_id,))
+        cursor.execute("SELECT * FROM compte WHERE id = ? and statut_compte = ?", (account_id, "Secondaire"))
         account = cursor.fetchone()
         if not account:
             return {"error": "Le compte n'existe pas."}
-
-        # Vérifier si le compte est le compte principal
-        cursor.execute("SELECT id FROM compte WHERE id_user = ? ORDER BY id ASC LIMIT 1", (account[2],))
-        main_account = cursor.fetchone()
-        if main_account and main_account[0] == account_id:
-            return {"error": "Le compte principal ne peut pas être clôturé."}
 
         # Vérifier s'il y a des transactions en cours (hypothèse : vérifier dans la table des transactions)
         cursor.execute("""
             SELECT COUNT(*) 
             FROM transaction2 
-            WHERE (id_sender = ? OR id_receveur = ?) AND type_transaction = 'en cours'
+            WHERE (id_sender = ? OR id_receveur = ?) AND type_transaction = 'pending'
         """, (account_id, account_id))
         pending_transactions = cursor.fetchone()[0]
         if pending_transactions > 0:
