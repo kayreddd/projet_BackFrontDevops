@@ -16,13 +16,12 @@ def create_account(compte: CompteCreate):
 
         # Commande SQL pour insérer un nouvel utilisateur
         cursor.execute("""
-        INSERT INTO compte (money, id_user) 
-        VALUES (?, ?)
-        """, (compte.money, compte.id_user))  # Utilisation des données du modèle
+        INSERT INTO compte (money, id_user, statut_compte) 
+        VALUES (?, ?, ?)
+        """, (0, compte.id_user, "Secondaire"))  # Utilisation des données du modèle
 
         # Sauvegarder les changements et fermer la connexion
         conn.commit()
-        conn.close()
 
         return {"message": f"Compte avec {compte.money} et id_user {compte.id_user} créé avec succès!"}
 

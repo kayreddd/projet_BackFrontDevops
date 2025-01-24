@@ -7,19 +7,28 @@ conn = sqlite3.connect("my_database.db")
 cursor = conn.cursor()
 
 #Commande SQL pour créer une table
+
+# cursor.execute("""
+# CREATE TABLE compte (
+#     id INTEGER PRIMARY KEY,
+#     money INTEGER,
+#     id_user INTEGER,
+#     date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
+#     statut_compte VARCHAR         
+# )
+# """)
+
+cursor.execute('DROP TABLE IF EXISTS "beneficiaire"')
+
 cursor.execute("""
-CREATE TABLE transaction2 (
+CREATE TABLE beneficiaire (
     id INTEGER PRIMARY KEY,
-    id_sender INTEGER,
-    id_receveur INTEGER,
-    type_transaction VARCHAR,
-    valeur_transaction INTEGER,
-    message VARCHAR,
+    name_beneficiaire VARCHAR,
+    id_beneficiaire INTEGER,
+    id_beneficiant INTEGER,
     date_transaction DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 """)
-
-# cursor.execute('DROP TABLE IF EXISTS "transaction2"')
 
 
 # Sauvegarder les changements et fermer la connexion

@@ -7,8 +7,12 @@ class UserCreate(BaseModel):
     mail: str
     password: str
 
+class CompteCreate(BaseModel):
+    money: int
+    id_user: int
+
 # Fonction pour créer un compte
-def create_user(user: UserCreate):
+def create_user(user: UserCreate, compte: CompteCreate):
     try:
          # Hasher le mot de passe
         hashed_password = hashpw(user.password.encode('utf-8'), gensalt()).decode('utf-8')
@@ -22,11 +26,23 @@ def create_user(user: UserCreate):
         VALUES (?, ?)
         """, (user.mail, hashed_password))  # Utilisation des données du modèle
 
+        user_id = cursor.lastrowid
+
+        
+        compte.id_user = 1
+        compte.money = 100
+
+        cursor.execute("""
+        INSERT INTO compte (money, id_user, statut_compte) 
+        VALUES (?, ?, ?)
+        """, (100, compte.id_user, "Principal"))
+
+
         # Sauvegarder les changements et fermer la connexion
         conn.commit()
         conn.close()
 
-        return {"message": f"Compte avec {user.mail} et id_user {user.password} créé avec succès!"}
+        return {"message": f"Compte avec {user.mail} et password {user.password} créé avec succès!"}
 
     except Exception as e:
         return {"error": str(e)}

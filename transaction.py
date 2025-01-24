@@ -76,3 +76,17 @@ def updateTransaction():
         return {"error": str(e)}
     finally:
         conn.close()
+
+def cancelTransaction(id_transaction):
+
+    conn  = sqlite3.connect('my_database.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT type_transaction FROM transaction2 WHERE id = '?'", (id_transaction))
+    transaction = cursor.fetchone()
+    if transaction and transaction[0] == "pending":
+        cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("cancel", id_transaction))
+    conn.commit()
+    conn.close()
+
+    return ("transaction annulé")
+
