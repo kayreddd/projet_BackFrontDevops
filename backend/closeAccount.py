@@ -12,6 +12,8 @@ def close_account(account_id):
         if not account:
             return {"error": "Le compte n'existe pas."}
 
+        cursor.execute("SELECT id FROM compte WHERE id = ? and statut_compte = ?", (account_id, "Secondaire"))
+        main_account = cursor.fetchone()
         # Vérifier s'il y a des transactions en cours (hypothèse : vérifier dans la table des transactions)
         cursor.execute("""
             SELECT COUNT(*) 

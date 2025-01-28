@@ -15,6 +15,7 @@ from addMoney import addMoney
 from transaction import create_transaction
 from transaction import updateTransaction
 from showTransaction import showTransaction
+from showTransaction import showAllTransaction
 from closeAccount import close_account
 from showBeneficiaire import addBeneficiaire
 from showBeneficiaire import showBeneficiaire
@@ -149,9 +150,18 @@ async def update_transaction_route():
 
 
 @app.post("/show_transaction")
-async def get_transaction(account_id):
+async def get_transaction(transaction_id, count_id):
     # Connexion à la base de données
-    result = showTransaction(account_id)
+    result = showTransaction(transaction_id, count_id)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    return result  # Renvoie le message de succès
+
+@app.post("/show_all_transaction")
+async def get_all_transaction(account_id):
+    # Connexion à la base de données
+    result = showAllTransaction(account_id)
     if "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
 

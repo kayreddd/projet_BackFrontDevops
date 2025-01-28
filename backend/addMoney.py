@@ -7,12 +7,14 @@ def addMoney(id_compte, montant):
         conn = sqlite3.connect("my_database.db")
         cursor = conn.cursor()
         # Récupérer toutes les lignes de la table 'compte'
-        cursor.execute("SELECT money FROM compte WHERE id = ?" , (id_compte,))
+        cursor.execute("SELECT money, statut_compte FROM compte WHERE id = ?" , (id_compte,))
         rows = cursor.fetchone()
 
         # Si la table est vide
         if not rows:
             return {"message": f"Compte avec id {id_compte} introuvable."}
+        if rows[1] == "closed":
+            return("le compte auquel vous souhaitez envoyé de l'argent est fermé")
         if (int(montant) > 0):
             money = int(rows[0]) + int(montant)
 

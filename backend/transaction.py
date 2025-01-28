@@ -45,15 +45,20 @@ def updateTransaction():
         cursor.execute("SELECT * FROM transaction2 WHERE type_transaction = 'pending'")
         transactions = cursor.fetchall()
         for transaction in transactions:
-            cursor.execute("SELECT money FROM compte WHERE id = ?",(str(transaction[1])))
+            cursor.execute("SELECT money, statut_compte FROM compte WHERE id = ?",(str(transaction[1])))
             money_left = cursor.fetchone()
+            if money_left[1] == "closed":
+                    return{"message" : "impossible d'effectuer la transaction, le compte envoyeur est cloturé"}
+            
             if (money_left[0] > transaction[4]):
 
                 left = money_left[0] - transaction[4] # soustraction du montant d'argent qui va être donné
                 
                 cursor.execute("UPDATE compte SET money = ? WHERE id = ?", (left, str(transaction[1])))
-                cursor.execute("SELECT money FROM compte WHERE id = ?",(str(transaction[2]))) # récupération de l'argent du receveur
+                cursor.execute("SELECT money, statut_compte FROM compte WHERE id = ?",(str(transaction[2]))) # récupération de l'argent du receveur
                 money_done = cursor.fetchone()
+                if money_done[1] == "closed":
+                    return("impossible d'effectuer la transaction, le compte receveur est cloturé")
                 done = money_done[0] + transaction[4]
                 cursor.execute("UPDATE compte SET money = ? WHERE id = ?", (done, str(transaction[2])))
                 cursor.execute("""
@@ -70,7 +75,7 @@ def updateTransaction():
             else:
                 cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("no money", str(transaction[0])))
         conn.commit()
-        return ("terminé sans accroc")
+        return {"message" : "terminé sans accroc"}
         
     except Exception as e:
         return {"error": str(e)}
@@ -88,5 +93,5 @@ def cancelTransaction(id_transaction):
     conn.commit()
     conn.close()
 
-    return ("transaction annulé")
+    return {"message" : "transaction annulé"}
 
