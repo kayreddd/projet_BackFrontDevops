@@ -34,6 +34,10 @@ app = FastAPI()
 #     return templates.TemplateResponse("home.html", {"request": request, "title": "Page d'accueil"})
 
 # Définir un modèle Pydantic pour la validation des données d'entrée
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+
 class CompteCreate(BaseModel):
     money: int
     id_user: int
