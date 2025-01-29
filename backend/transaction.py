@@ -64,11 +64,11 @@ def updateTransaction():
                 cursor.execute("""
                 INSERT INTO historic (id_user, type_transaction, valeur_transaction, iban, name, id_transaction) 
                 VALUES (?, ?, ?, ?, ?, ?)
-                """, (str(transaction[1]), "envoie de l'argent vers", str(transaction[4]), str(transaction[1]), str(transaction[5]), str(transaction[0])))
+                """, (str(transaction[1]), "envoie de l'argent vers", str(transaction[4]), str(transaction[1]), str(transaction[5]), str(transaction[0]),))
                 cursor.execute("""
                 INSERT INTO historic (id_user, type_transaction, valeur_transaction, iban, name, id_transaction) 
                 VALUES (?, ?, ?, ?, ?, ?)
-                """, (str(transaction[2]), "reçoit de l'argent de", str(transaction[4]), str(transaction[2]), str(transaction[5]), str(transaction[0])))
+                """, (str(transaction[2]), "reçoit de l'argent de", str(transaction[4]), str(transaction[2]), str(transaction[5]), str(transaction[0]),))
 
                 cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("done", str(transaction[0])))
                 
