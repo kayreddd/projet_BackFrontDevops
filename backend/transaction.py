@@ -68,7 +68,7 @@ def updateTransaction():
                 cursor.execute("""
                 INSERT INTO historic (id_user, type_transaction, valeur_transaction, iban, name) 
                 VALUES (?, ?, ?, ?, ?)
-                """, (str(transaction[2]), "reçoit de l'argent de", str(transaction[4]), str(transaction[1]), str(transaction[5])))
+                """, (str(transaction[2]), "reçoit de l'argent de", str(transaction[4]), str(transaction[2]), str(transaction[5])))
 
                 cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("done", str(transaction[0])))
                 
