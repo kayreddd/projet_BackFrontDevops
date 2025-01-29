@@ -27,9 +27,9 @@ def create_user(user: UserCreate):
         money = 100
 
         cursor.execute("""
-        INSERT INTO compte (money, id_user, statut_compte) 
+        INSERT INTO compte (money, id_user, statut_compte, iban) 
         VALUES (?, ?, ?)
-        """, (100, user_id, "Principal"))
+        """, (100, user_id, "Principal", user_id))
 
 
         # Sauvegarder les changements et fermer la connexion
