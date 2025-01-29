@@ -9,7 +9,6 @@ def showTransaction(transaction_id, user_id):
         # Récupérer toutes les lignes de la table 'compte'
         cursor.execute("SELECT * FROM transaction2 WHERE id = ? AND (id_sender = ? OR id_receveur = ?)  ",(transaction_id, user_id, user_id))
         rows = cursor.fetchone()
-        print(rows)
         # Fermer la connexion
         conn.commit()
         conn.close()
@@ -19,7 +18,7 @@ def showTransaction(transaction_id, user_id):
             return {"message": "Aucune transaction trouvée pour cet utilisateur."}
 
         # Retourner les données sous forme de liste de dictionnaires
-        return (rows)
+        return {"id":rows[0], "id_sender": rows[1], "id_receveur": rows[2], "type_transaction": rows[3], "valeur_transaction": rows[4], "message": rows[5],"date": rows[6]}
     
     except Exception as e:
         return {"error": str(e)}
