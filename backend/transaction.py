@@ -62,13 +62,13 @@ def updateTransaction():
                 done = money_done[0] + transaction[4]
                 cursor.execute("UPDATE compte SET money = ? WHERE id = ?", (done, str(transaction[2])))
                 cursor.execute("""
-                INSERT INTO historic (id_user, type_transaction, valeur_transaction) 
-                VALUES (?, ?, ?)
-                """, (str(transaction[1]), "envoie de l'argent vers", str(transaction[4])))
+                INSERT INTO historic (id_user, type_transaction, valeur_transaction, iban, name) 
+                VALUES (?, ?, ?, ?, ?)
+                """, (str(transaction[1]), "envoie de l'argent vers", str(transaction[4]), str(transaction[1]), str(transaction[5])))
                 cursor.execute("""
-                INSERT INTO historic (id_user, type_transaction, valeur_transaction) 
-                VALUES (?, ?, ?)
-                """, (str(transaction[2]), "reçoit de l'argent de", str(transaction[4])))
+                INSERT INTO historic (id_user, type_transaction, valeur_transaction, iban, name) 
+                VALUES (?, ?, ?, ?, ?)
+                """, (str(transaction[2]), "reçoit de l'argent de", str(transaction[4]), str(transaction[1]), str(transaction[5])))
 
                 cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("done", str(transaction[0])))
                 

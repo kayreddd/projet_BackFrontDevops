@@ -18,15 +18,17 @@ cursor = conn.cursor()
 # )
 # """)
 
-cursor.execute('DROP TABLE IF EXISTS "beneficiaire"')
+cursor.execute('DROP TABLE IF EXISTS "historic"')
 
 cursor.execute("""
-CREATE TABLE beneficiaire (
+CREATE TABLE historic (
     id INTEGER PRIMARY KEY,
-    name_beneficiaire VARCHAR,
-    id_beneficiaire INTEGER,
-    id_beneficiant INTEGER,
-    date_transaction DATETIME DEFAULT CURRENT_TIMESTAMP
+    id_user VARCHAR,
+    type_transaction VARCHAR,
+    valeur_transaction INTEGER,
+    date_transaction DATETIME DEFAULT CURRENT_TIMESTAMP,
+    iban INTEGER,
+    name VARCHAR    
 )
 """)
 

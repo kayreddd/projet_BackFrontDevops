@@ -21,9 +21,9 @@ def addMoney(id_compte, montant):
             # Mettre à jour la valeur de 'money' dans la table
             cursor.execute("UPDATE compte SET money = ? WHERE id = ?", (money, id_compte))
             cursor.execute("""
-            INSERT INTO historic (id_user, type_transaction, valeur_transaction) 
-            VALUES (?, ?, ?)
-            """, (id_compte, "dépot", montant))
+            INSERT INTO historic (id_user, type_transaction, valeur_transaction, iban, name) 
+            VALUES (?, ?, ?, ?, ?)
+            """, (id_compte, "dépot", montant, id_compte, "depot"))
             conn.commit()
             conn.close()
             # Retourner les données sous forme de liste de dictionnaires

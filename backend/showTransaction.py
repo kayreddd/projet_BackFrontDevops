@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 def showTransaction(transaction_id, user_id):
     try:
@@ -34,14 +35,14 @@ def showAllTransaction(account_id):
         rows = cursor.fetchall()
         # Fermer la connexion
         conn.close()
-        keys = ["id", "id_user", "type", "value"]
-        convert = [dict(zip(keys, row)) for row in rows]
+        keys = ["id", "id_user", "type", "value", "date_transaction", "iban", "message"]
+        transactions = [dict(zip(keys, row)) for row in rows]
         # Si la table est vide
-        if not convert:
+        if not transactions:
             return {"message": "Aucune transaction trouvée pour cet utilisateur."}
 
         # Retourner les données sous forme de liste de dictionnaires
-        return convert
+        return transactions
 
     except Exception as e:
         return {"error": str(e)}
