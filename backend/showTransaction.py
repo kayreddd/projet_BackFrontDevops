@@ -30,22 +30,18 @@ def showAllTransaction(account_id):
         cursor = conn.cursor()
 
         # Récupérer toutes les lignes de la table 'compte'
-        cursor.execute("SELECT * FROM transaction2 WHERE id_sender = ? OR id_receveur = ?  ",( account_id, account_id))
-        rows = cursor.fetchall()
-        liste = []
-        liste.append(rows)
         cursor.execute("SELECT * FROM historic WHERE id_user = ?  ",(account_id))
         rows = cursor.fetchall()
-        liste.append(rows)
         # Fermer la connexion
         conn.close()
-
+        keys = ["id", "id_user", "type", "value"]
+        convert = [dict(zip(keys, row)) for row in rows]
         # Si la table est vide
-        if not rows:
+        if not convert:
             return {"message": "Aucune transaction trouvée pour cet utilisateur."}
 
         # Retourner les données sous forme de liste de dictionnaires
-        return liste
+        return convert
 
     except Exception as e:
         return {"error": str(e)}
