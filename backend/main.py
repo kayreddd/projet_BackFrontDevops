@@ -70,7 +70,11 @@ class transactionCreate(BaseModel):
 
 class BeneficiaireCreate(BaseModel):
     name_beneficiaire: str
-    id_beneficiaire: str
+    id_beneficiaire: int
+    id_user: int
+
+class UserRequest(BaseModel):
+    id_user: int
 
 # Route pour créer un compte
 @app.post("/create_account")
@@ -192,9 +196,9 @@ async def get_close_account(account_id):
 
 
 @app.post("/add_beneficiaire")
-async def add_beneficiaire_route(beneficiaire: BeneficiaireCreate, id_user):
+async def add_beneficiaire_route(beneficiaire: BeneficiaireCreate):
     try:
-        result = addBeneficiaire(beneficiaire.name_beneficiaire, beneficiaire.id_beneficiaire, id_user)
+        result = addBeneficiaire(beneficiaire)
 
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
@@ -205,10 +209,10 @@ async def add_beneficiaire_route(beneficiaire: BeneficiaireCreate, id_user):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/show_beneficiare")
-async def get_beneficiaire(id_user):
+async def get_beneficiaire(user: UserRequest):
     # Connexion à la base de données
-    result = showBeneficiaire(id_user)
-    if "error" in result:
+    result = showBeneficiaire(user.id_user)
+    if "error" in   result:
         raise HTTPException(status_code=500, detail=result["error"])
 
     return result  # Renvoie le message de succès
