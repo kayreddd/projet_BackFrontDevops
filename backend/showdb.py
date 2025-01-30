@@ -8,7 +8,7 @@ cursor = conn.cursor()
 
 # Récupérer toutes les lignes de la table 'compte'
 try:
-    cursor.execute("SELECT * FROM historic")
+    cursor.execute("SELECT * FROM transaction2")
     rows = cursor.fetchall()  # Récupérer toutes les lignes
     
     # Afficher les données

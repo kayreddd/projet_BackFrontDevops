@@ -19,7 +19,8 @@ from showTransaction import showAllTransaction
 from closeAccount import close_account
 from showBeneficiaire import addBeneficiaire
 from showBeneficiaire import showBeneficiaire
-
+from fastapi.middleware.cors import CORSMiddleware
+from showTransaction import router as transaction_router
 
 
 app = FastAPI()
@@ -33,8 +34,21 @@ app = FastAPI()
 # @app.get("/", response_class=HTMLResponse)
 # async def read_root(request: Request):
 #     return templates.TemplateResponse("home.html", {"request": request, "title": "Page d'accueil"})
-
 # Définir un modèle Pydantic pour la validation des données d'entrée
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Autoriser Vite.js
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Inclure les routes de transactions
+app.include_router(transaction_router)
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

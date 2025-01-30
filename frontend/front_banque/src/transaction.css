@@ -1,0 +1,55 @@
+.transactions-container {
+    max-width: 90vw; /* Prend presque toute la largeur de l'écran */
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Espacement légèrement augmenté */
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    width: 90vw; /* Presque toute la largeur de la page */
+    max-width: 1200px; /* Pour éviter que ça devienne trop grand sur écrans larges */
+    margin: 0 auto; /* Centrage */
+}
+
+.icon {
+    font-size: 28px;
+    color: #007bff;
+    margin-right: 16px; /* Espacement entre l'icône et le texte */
+}
+
+.transaction-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between; /* Espace entre le texte et le montant */
+}
+
+.transaction-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-type {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+}
+
+.transaction-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #28a745;
+}
