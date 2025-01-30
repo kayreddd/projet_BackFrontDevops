@@ -191,3 +191,110 @@ header {
     background-color: #f0f0f0; /* Ajout d'un fond temporaire */
   }
   
+
+
+
+
+
+/* Overlay pour l'effet de superposition */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; /* Pour s'assurer que l'overlay soit au-dessus de tout */
+  }
+  
+  /* Formulaire de création de compte */
+  .create-account-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .add-account-btn {
+    margin: 10px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .close-btn {
+    margin-top: 10px;
+    padding: 5px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  
+
+
+
+  /* Style du bouton Ajouter un compte */
+.add-account-btn {
+    position: absolute;
+    top: 40px;  /* Décale le bouton plus bas (tu peux ajuster cette valeur pour le positionner où tu veux) */
+    left: 50%;
+    transform: translateX(-50%); /* Centre le bouton horizontalement */
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Changer la couleur au survol du bouton */
+  .add-account-btn:hover {
+    background-color: #45a049;
+  }
+  
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .modal {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

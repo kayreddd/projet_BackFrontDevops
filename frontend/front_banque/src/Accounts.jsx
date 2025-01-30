@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';  // Importation d'Axios
 import './Accounts.css';  // Importation du CSS
 
+
 function Accounts() {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,22 +12,23 @@ function Accounts() {
     const fetchAccounts = async () => {
       setLoading(true);
       try {
-        // Utilisation d'Axios pour faire la requête
         const response = await axios.post("http://127.0.0.1:8000/show_accounts", {
           id_user: 1,  // Remplacer par un ID utilisateur valide
         });
 
-        
+        if (response.data && response.data.accounts) {
+          // Vérifie la présence des données
+          const formattedAccounts = response.data.accounts.map((account) => ({
+            id: account.id,
+            type_de_compte: account.type_de_compte,
+            money: account.money,
+            iban: account.iban,
+          }));
 
-        // Vérification et formatage des données
-        const formattedAccounts = response.data.accounts.map((account) => ({
-          id: account.id,
-          type_de_compte: account.type_de_compte,
-          money: account.money,
-          iban: account.iban, // Assurez-vous que 'iban' existe dans la réponse
-        }));
-
-        setAccounts(formattedAccounts);  // Mettre à jour l'état avec les comptes formatés
+          setAccounts(formattedAccounts);  // Mettre à jour l'état avec les comptes formatés
+        } else {
+          throw new Error("Format de la réponse incorrect");
+        }
       } catch (error) {
         setError(error.message || "Erreur lors de la récupération des comptes");
       } finally {
@@ -43,7 +45,7 @@ function Accounts() {
   return (
     <div className="App">
       <header>
-        <button className="add-account-btn">Ajouter un compte</button>
+        
         <h1>Mes Comptes</h1>
         <h2 className="total-assets">Total des actifs : {totalAssets} €</h2>
       </header>
@@ -62,8 +64,11 @@ function Accounts() {
                   <h2>{account.type_de_compte}</h2>
                   <p><strong>IBAN :</strong> {account.iban}</p>
                   <p><strong>Solde :</strong> {account.money} €</p>
-                  <button onClick={() => alert(`Transactions du compte ${account.iban}`)}>
+                  <button onClick={() => alert('Transactions du compte')}>
                     Transactions
+                  </button>
+                  <button onClick={() => alert('Le compte va être cloturer')}>
+                    Cloturer le compte
                   </button>
                 </div>
               ))
