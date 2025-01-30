@@ -74,6 +74,7 @@ function CreateAccount() {
             {error && <p className="error">{error}</p>}
             <button className="close-btn" onClick={() => setShowForm(false)}>Fermer</button>
           </div>
+          <div></div>
         </div>
       )}
     </div>

@@ -1,6 +1,11 @@
 import sqlite3
 import json
+from fastapi import APIRouter
 
+router = APIRouter()
+
+
+@router.get("/transactions/{transaction_id}/{user_id}")
 def showTransaction(transaction_id, user_id):
     try:
          
@@ -23,19 +28,21 @@ def showTransaction(transaction_id, user_id):
     
     except Exception as e:
         return {"error": str(e)}
-    
-def showAllTransaction(account_id):
+
+
+@router.get("/transactions/{account_id}")
+def showAllTransaction(account_id: int):
     try:
             
         conn = sqlite3.connect("my_database.db")
         cursor = conn.cursor()
 
         # Récupérer toutes les lignes de la table 'compte'
-        cursor.execute("SELECT * FROM historic WHERE id_user = ?  ",(account_id))
+        cursor.execute("SELECT * FROM historic WHERE id_user = ?  ",(account_id,))
         rows = cursor.fetchall()
         # Fermer la connexion
         conn.close()
-        keys = ["id", "id_user", "type", "value", "date_transaction", "iban", "message"]
+        keys = ["id", "id_user", "type", "value", "date_transaction", "iban", "message","id_transaction", "etat"]
         transactions = [dict(zip(keys, row)) for row in rows]
         # Si la table est vide
         if not transactions:

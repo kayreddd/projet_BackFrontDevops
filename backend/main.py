@@ -1,9 +1,13 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi import HTTPException
+#import asyncio
 
-# Importer les fonctions nécessaires
-from createAccount import create_account
+
+# # from fastapi.staticfiles import StaticFiles pour le css
+# from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
+from createAccount import create_account  # Importez la fonction depuis createAccount.py
 from createUser import create_user
 from showUser import showUser
 from showAccount import showAccount
@@ -15,36 +19,49 @@ from showTransaction import showAllTransaction
 from closeAccount import close_account
 from showBeneficiaire import addBeneficiaire
 from showBeneficiaire import showBeneficiaire
+from fastapi.middleware.cors import CORSMiddleware
+from showTransaction import router as transaction_router
+
 
 app = FastAPI()
 
-# Configuration CORS
-origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:5173",  # Ajouté pour le frontend sur le port 5173
-]
+#app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Configurer Jinja2 pour les templates
+# templates = Jinja2Templates(directory="template")
+
+# Route pour afficher une page HTML
+# @app.get("/", response_class=HTMLResponse)
+# async def read_root(request: Request):
+#     return templates.TemplateResponse("home.html", {"request": request, "title": "Page d'accueil"})
+# Définir un modèle Pydantic pour la validation des données d'entrée
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["http://localhost:5173"],  # Autoriser Vite.js
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Modèles Pydantic pour la validation des données
+# Inclure les routes de transactions
+app.include_router(transaction_router)
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+
 class CompteCreate(BaseModel):
+    money: int
     id_user: int
-    type_de_compte: str
 
 class UserCreate(BaseModel):
     mail: str
     password: str
 
-class TransactionCreate(BaseModel):
+class transactionCreate(BaseModel):
     montant: int
     id_sender: int
     id_receveur: int
@@ -53,160 +70,153 @@ class TransactionCreate(BaseModel):
 
 class BeneficiaireCreate(BaseModel):
     name_beneficiaire: str
-    id_beneficiaire: str
-
-class AccountRequest(BaseModel):
+    id_beneficiaire: int
     id_user: int
 
-class AddMoneyRequest(BaseModel):
-    id_compte: int
-    montant: int
+class UserRequest(BaseModel):
+    id_user: int
 
-# Route principale
-@app.get("/")
-async def main():
-    return {"message": "Hello World"}
-
+# Route pour créer un compte
 @app.post("/create_account")
 async def create_account_route(compte: CompteCreate):
     try:
-        # Appeler la fonction create_account en utilisant await
-        result = await create_account(compte)
+        # Appeler la fonction create_account depuis createAccount.py
+        result = create_account(compte)  # On passe l'objet CompteCreate
+
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
-        return result
+
+        return result  # Renvoie le message de succès
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Route pour créer un utilisateur
+
+# Route pour créer un user
 @app.post("/create_user")
 async def create_user_route(user: UserCreate):
     try:
-        result = create_user(user)
+        # Appeler la fonction create_account depuis createAccount.py
+        result = create_user(user)  # On passe l'objet CompteCreate
+
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
-        return result
+
+        return result  # Renvoie le message de succès
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
 
-# Route pour afficher les comptes d'un utilisateur
 @app.post("/show_accounts")
-async def show_accounts(request: AccountRequest):
-    try:
-        # Appeler la fonction showAccount en passant l'id utilisateur récupéré
-        result = showAccount(request.id_user)
-        
-        if "error" in result:
-            raise HTTPException(status_code=500, detail=result["error"])
-        
-        return result  # Renvoie les comptes de l'utilisateur
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Erreur interne du serveur")
+async def get_accounts(id_user):
+    # Connexion à la base de données
+    result = showAccount(id_user)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
 
+    return result  # Renvoie le message de succès 
 
 @app.post("/show_user")
-async def get_user(id_user: int):
-    try:
-        result = showUser(id_user)
-        if "error" in result:
-            raise HTTPException(status_code=500, detail=result["error"])
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def get_user(id_user):
+    # Connexion à la base de données
+    result = showUser(id_user)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
 
+    return result  # Renvoie le message de succès 
 
 # Route pour ajouter de l'argent à un compte
 @app.post("/add_money")
-async def add_money_route(request: AddMoneyRequest):
+async def add_money_route(id_compte, montant):
     try:
-        result = addMoney(request.id_compte, request.montant)
+        # Appeler la fonction create_account depuis createAccount.py
+        result = addMoney(id_compte, montant)  # On passe l'objet CompteCreate
+
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
-        return result
+
+        return result  # Renvoie le message de succès
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
 
-# Route pour créer une transaction
 @app.post("/create_transaction")
-async def create_transaction_route(transaction: TransactionCreate):
+async def create_transaction_route(transaction: transactionCreate):
     try:
-        result = create_transaction(transaction)
+        # Appeler la fonction create_account depuis createAccount.py
+        result = create_transaction(transaction)  # On passe l'objet CompteCreate
+
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
-        return result
+
+        return result  # Renvoie le message de succès
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-# Route pour mettre à jour une transaction
+    
 @app.post("/update_transaction")
 async def update_transaction_route():
-    try:
-        result = updateTransaction()
-        if "error" in result:
-            raise HTTPException(status_code=500, detail=result["error"])
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # Connexion à la base de données
+    result = updateTransaction()
+        
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
 
-# Route pour afficher une transaction
+    return result  # Renvoie le message de succès
+
+
 @app.post("/show_transaction")
-async def get_transaction(transaction_id: int, count_id: int):
-    try:
-        result = showTransaction(transaction_id, count_id)
-        if "error" in result:
-            raise HTTPException(status_code=500, detail=result["error"])
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def get_transaction(transaction_id, count_id):
+    # Connexion à la base de données
+    result = showTransaction(transaction_id, count_id)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
 
-# Route pour afficher toutes les transactions
+    return result  # Renvoie le message de succès
+
 @app.post("/show_all_transaction")
-async def get_all_transaction(account_id: int):
-    try:
-        result = showAllTransaction(account_id)
-        if "error" in result:
-            raise HTTPException(status_code=500, detail=result["error"])
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def get_all_transaction(account_id):
+    # Connexion à la base de données
+    result = showAllTransaction(account_id)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
 
-# Route pour fermer un compte
+    return result  # Renvoie le message de succès
+
 @app.post("/close_account")
-async def get_close_account(account_id: int):
-    try:
-        result = close_account(account_id)
-        if "error" in result:
-            raise HTTPException(status_code=500, detail=result["error"])
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def get_close_account(account_id):
+    # Connexion à la base de données
+    result = close_account(account_id)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
 
-# Route pour ajouter un bénéficiaire
+    return result  # Renvoie le message de succès
+
+
 @app.post("/add_beneficiaire")
-async def add_beneficiaire_route(beneficiaire: BeneficiaireCreate, id_user: int):
+async def add_beneficiaire_route(beneficiaire: BeneficiaireCreate):
     try:
-        result = addBeneficiaire(beneficiaire.name_beneficiaire, beneficiaire.id_beneficiaire, id_user)
+        result = addBeneficiaire(beneficiaire)
+
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
-        return result
+
+        return result  # Renvoie le message de succès
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Route pour afficher les bénéficiaires
 @app.post("/show_beneficiare")
-async def get_beneficiaire(id_user: int):
-    try:
-        result = showBeneficiaire(id_user)
-        if "error" in result:
-            raise HTTPException(status_code=500, detail=result["error"])
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def get_beneficiaire(user: UserRequest):
+    # Connexion à la base de données
+    result = showBeneficiaire(user.id_user)
+    if "error" in   result:
+        raise HTTPException(status_code=500, detail=result["error"])
 
-# Pour lancer le serveur uvicorn
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    return result  # Renvoie le message de succès
+
 
 #pour que la fonction ne s'execute que toutes les 10 sec auto
 
