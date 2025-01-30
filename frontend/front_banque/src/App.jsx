@@ -3,30 +3,31 @@ import TransactionForm from "./TransactionForm";
 import Register from "./Register";
 import Beneficiaire from "./BeneficiaireForm";
 import './App.css'
-
+import { BrowserRouter } from 'react-router-dom';
+import { Route,Routes } from 'react-router-dom';
+import React from 'react';
 import Transactions from "./transaction";
+import TestPage from './test';
+import BeneficiaireForm from './BeneficiaireForm';
 
 function App() {
 
   return (
     <>
-      <div>
-        <h1>Envoyer une Transaction</h1>
-        <TransactionForm/>
-      </div>
-      <div>
-        <h1>créer un user</h1>
-        <Register/>
-      </div>
-      <div>
-        <h1>créer un beneficiaire</h1>
-        <Beneficiaire/>
-      </div>
-      <div>
-        <Transactions userId={1} /> {/* Remplace 1 par l'ID de ton utilisateur */}
-      </div>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={""} /> 
+        <Route path="/transactions" element={<Transactions userId={1} />} /> 
+        <Route path="/transaction_form" element={<TransactionForm />} />
+        <Route path="/beneficiaire" element={<BeneficiaireForm />} />
+        <Route path="/register" element={<Register />} />
+
+
+      </Routes>
+    </BrowserRouter>
+  </>
+  );
+    
 }
 
 export default App;
