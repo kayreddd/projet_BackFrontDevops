@@ -18,16 +18,19 @@ cursor = conn.cursor()
 # )
 # """)
 
-cursor.execute('DROP TABLE IF EXISTS "compte"')
+cursor.execute('DROP TABLE IF EXISTS "historic"')
 
 cursor.execute("""
-CREATE TABLE compte (
+CREATE TABLE historic (
     id INTEGER PRIMARY KEY,
-    money INTEGER,
     id_user INTEGER,
-    date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
-    statut_compte VARCHAR,
-    iban INTEGER
+    type_transaction VARCHAR,
+    valeur_transaction INTEGER,
+    date_transaction DATETIME DEFAULT CURRENT_TIMESTAMP,
+    iban INTEGER,
+    name VARCHAR,
+    id_transaction INTEGER,
+    etat VARCHAR
 )
 """)
 

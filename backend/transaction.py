@@ -1,3 +1,5 @@
+# ajouter en cours ou non dans dans historique
+
 from pydantic import BaseModel
 
 import sqlite3
@@ -26,7 +28,16 @@ def create_transaction(transaction: TransactionCreate):
         INSERT INTO transaction2 (valeur_transaction, id_sender, id_receveur, type_transaction, message) 
         VALUES (?, ?, ?, ?, ?)
         """, (transaction.montant, transaction.id_sender, transaction.id_receveur, "pending", transaction.message))  # Utilisation des données du modèle
-
+        transaction_id = cursor.lastrowid
+        cursor.execute("""
+        INSERT INTO historic (id_user, type_transaction, valeur_transaction, iban, name, id_transaction, etat) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, ( transaction.id_sender, "envoie de l'argent vers",transaction.montant, transaction.id_sender, transaction.message, transaction_id,"pending"))
+        cursor.execute("""
+        INSERT INTO historic (id_user, type_transaction, valeur_transaction, iban, name, id_transaction, etat) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, ( transaction.id_receveur, "reçoit de l'agent de",-(transaction.montant), transaction.id_receveur, transaction.message, transaction_id,"pending"))
+        
         # Sauvegarder les changements et fermer la connexion
         conn.commit()
         conn.close()
@@ -61,19 +72,13 @@ def updateTransaction():
                     return("impossible d'effectuer la transaction, le compte receveur est cloturé")
                 done = money_done[0] + transaction[4]
                 cursor.execute("UPDATE compte SET money = ? WHERE id = ?", (done, str(transaction[2])))
-                cursor.execute("""
-                INSERT INTO historic (id_user, type_transaction, valeur_transaction, iban, name, id_transaction) 
-                VALUES (?, ?, ?, ?, ?, ?)
-                """, (str(transaction[1]), "envoie de l'argent vers", str(transaction[4]), str(transaction[1]), str(transaction[5]), str(transaction[0]),))
-                cursor.execute("""
-                INSERT INTO historic (id_user, type_transaction, valeur_transaction, iban, name, id_transaction) 
-                VALUES (?, ?, ?, ?, ?, ?)
-                """, (str(transaction[2]), "reçoit de l'argent de", str(transaction[4]), str(transaction[2]), str(transaction[5]), str(transaction[0]),))
+                cursor.execute("UPDATE historic SET etat = ? WHERE id_transaction = ?", ("done", str(transaction[0])))
 
                 cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("done", str(transaction[0])))
                 
             else:
                 cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("no money", str(transaction[0])))
+                cursor.execute("UPDATE historic SET etat = ? WHERE id_transaction = ?", ("cancel", str(transaction[0])))
         conn.commit()
         return {"message" : "terminé sans accroc"}
         
@@ -90,6 +95,7 @@ def cancelTransaction(id_transaction):
     transaction = cursor.fetchone()
     if transaction and transaction[0] == "pending":
         cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("cancel", id_transaction))
+        cursor.execute("UPDATE historic SET etat = ? WHERE id = ?", ("cancel", id_transaction))
     conn.commit()
     conn.close()
 

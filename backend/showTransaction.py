@@ -35,7 +35,7 @@ def showAllTransaction(account_id):
         rows = cursor.fetchall()
         # Fermer la connexion
         conn.close()
-        keys = ["id", "id_user", "type", "value", "date_transaction", "iban", "message"]
+        keys = ["id", "id_user", "type", "value", "date_transaction", "iban", "message","id_transaction", "etat"]
         transactions = [dict(zip(keys, row)) for row in rows]
         # Si la table est vide
         if not transactions:
