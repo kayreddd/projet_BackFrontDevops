@@ -3,14 +3,18 @@ import { useEffect, useState } from "react";
 import { getAllTransactions } from "./api"; // import de la fonction pour recup toutes les transactions
 import { FaShoppingCart, FaArrowUp, FaArrowDown, FaSearch } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'; // Import du hook useNavigate
-import './transaction.css'
+import { useLocation } from "react-router-dom";
+import './transaction.css';
 
-const Transactions = ({ userId }) => {
+const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [searchTransaction, setSearchTransaction] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const [cancelToast, setCancelToast] = useState(null); // Gérer l'affichage du toast
   const navigate = useNavigate(); // Hook pour la navigation
-
+  const location = useLocation();
+  const userId = location.state?.id || "Aucun ID reçu";
+  console.log(userId);
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -36,6 +40,31 @@ const Transactions = ({ userId }) => {
   // Séparer les transactions en deux catégories : "en cours" et "done"
   const pendingTransactions = filteredTransactions.filter(t => t.etat === "pending");
   const doneTransactions = filteredTransactions.filter(t => t.etat === "done");
+
+  // Fonction pour annuler une transaction (avec délai de confirmation)
+  const handleCancelTransaction = (transactionId, userId) => {
+    // Afficher le toast avec un délai d'annulation
+    setCancelToast({
+      id: transactionId,
+      timeout: setTimeout(async () => {
+        try {
+          await cancelTransaction(transactionId, userId); // Passer l'userId
+          setTransactions((prev) => prev.filter((t) => t.id !== transactionId));
+        } catch (error) {
+          console.error("Erreur lors de la suppression de la transaction :", error);
+        }
+        setCancelToast(null);
+      }, 5000),
+    });
+  };  
+
+  // Annuler l'annulation (garder la transaction)
+  const undoCancel = () => {
+    if (cancelToast) {
+      clearTimeout(cancelToast.timeout);
+      setCancelToast(null);
+    }
+  };
 
   return (
     <div className="transactions-container">
@@ -87,6 +116,7 @@ const Transactions = ({ userId }) => {
                   <div className={`transaction-value ${t.value > 0 ? "positive" : "negative"}`}>
                     {t.value} €
                   </div>
+                  <button className="cancel-btn" onClick={() => handleCancelTransaction(t.id, t.id_user)}>Annuler</button>
                 </div>
               </div>
             ))}
@@ -116,13 +146,21 @@ const Transactions = ({ userId }) => {
       </div>
 
       {/* Bouton pour créer une transaction */}
-      <div className="test">
+      {/* <div className="test">
         <button onClick={() => navigate('/transaction_form')}>Créer une transaction</button>
-      </div>
+      </div> */}
 
       {/* Message si aucune transaction */}
       {pendingTransactions.length === 0 && doneTransactions.length === 0 && (
         <p>Aucune transaction trouvée.</p>
+      )}
+
+      {/* Toast d'annulation */}
+      {cancelToast && (
+        <div className="toast">
+          <p>Annulation de la transaction en cours...</p>
+          <button onClick={undoCancel}>Annuler l'annulation</button>
+        </div>
       )}
     </div>
   );
