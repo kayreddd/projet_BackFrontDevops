@@ -186,8 +186,8 @@ async def get_all_transaction(account_id):
 
     return result  # Renvoie le message de succès
 
-@app.delete("/cancel_transaction/{transaction_id}/{id_user}")
-async def delete_transaction(transaction_id: int, id_user: int):
+@app.put("/cancel_transaction/{transaction_id}/{id_user}")
+async def update_transaction_status(transaction_id: int, id_user: int):
     result = cancel_transaction(transaction_id, id_user)
     if "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])

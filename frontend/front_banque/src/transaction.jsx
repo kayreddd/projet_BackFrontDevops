@@ -4,6 +4,7 @@ import { getAllTransactions } from "./api"; // import de la fonction pour recup 
 import { FaShoppingCart, FaArrowUp, FaArrowDown, FaSearch } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'; // Import du hook useNavigate
 import { useLocation } from "react-router-dom";
+import { cancelTransaction } from './api';
 import './transaction.css';
 
 const Transactions = () => {
@@ -11,6 +12,7 @@ const Transactions = () => {
   const [searchTransaction, setSearchTransaction] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [cancelToast, setCancelToast] = useState(null); // Gérer l'affichage du toast
+  const [tempTransaction, setTempTransaction] = useState(null); // Ajouté pour stocker temporairement l'état de la transaction avant modification
   const navigate = useNavigate(); // Hook pour la navigation
   const location = useLocation();
   const userId = location.state?.id || "Aucun ID reçu";
@@ -42,27 +44,49 @@ const Transactions = () => {
   const doneTransactions = filteredTransactions.filter(t => t.etat === "done");
 
   // Fonction pour annuler une transaction (avec délai de confirmation)
-  const handleCancelTransaction = (transactionId, userId) => {
-    // Afficher le toast avec un délai d'annulation
-    setCancelToast({
-      id: transactionId,
-      timeout: setTimeout(async () => {
-        try {
-          await cancelTransaction(transactionId, userId); // Passer l'userId
-          setTransactions((prev) => prev.filter((t) => t.id !== transactionId));
-        } catch (error) {
-          console.error("Erreur lors de la suppression de la transaction :", error);
-        }
-        setCancelToast(null);
-      }, 5000),
-    });
+  const handleCancelTransaction = async (transactionId, userId) => {
+
+    // Sauvegarder l'état de la transaction avant tentative d'annulation
+    const transactionToCancel = transactions.find(t => t.id === transactionId);
+    setTempTransaction(transactionToCancel);
+
+    try {  
+      // Appel API pour mettre à jour en "cancel"
+      await cancelTransaction(transactionId, userId);
+  
+      // ✅ Mettre à jour localement l'état de la transaction
+      setTransactions(prev => prev.map(t =>
+        t.id === transactionId ? { ...t, etat: "cancel" } : t
+      ));
+  
+      // ✅ Afficher le toast
+      setCancelToast({
+        id: transactionId,
+        timeout: setTimeout(() => {
+          setCancelToast(null);
+        }, 5000),
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'annulation :", error);
+      // Rétablir la transaction en cas d'échec
+      setTransactions(prev => prev.map(t =>
+        t.id === transactionId ? tempTransaction : t  // Restaurer l'état initial de la transaction
+      ));
+    }
   };  
 
-  // Annuler l'annulation (garder la transaction)
-  const undoCancel = () => {
+   // Annuler l'annulation (garder la transaction)
+   const undoCancel = () => {
     if (cancelToast) {
       clearTimeout(cancelToast.timeout);
       setCancelToast(null);
+
+      // Restaurer l'état de la transaction si l'utilisateur annule
+      if (tempTransaction) {
+        setTransactions(prev => prev.map(t =>
+          t.id === tempTransaction.id ? tempTransaction : t
+        ));
+      }
     }
   };
 

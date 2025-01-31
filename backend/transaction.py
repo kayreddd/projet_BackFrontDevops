@@ -101,11 +101,11 @@ def cancel_transaction(transaction_id: int, id_user: int):
             conn.close()
             raise HTTPException(status_code=404, detail="Transaction non trouvée pour cet utilisateur")
 
-        # Supprimer la transaction
-        cursor.execute("DELETE FROM historic WHERE id = ? AND id_user = ?", (transaction_id, id_user))
+        # Mettre à jour l'état de la transaction à "cancel"
+        cursor.execute("UPDATE historic SET etat = 'cancel' WHERE id = ? AND id_user = ?", (transaction_id, id_user))
         conn.commit()
         conn.close()
 
-        return {"message": "Transaction annulée avec succès"}
+        return {"message": "Transaction annulée avec succès (statut modifié à 'cancel')"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

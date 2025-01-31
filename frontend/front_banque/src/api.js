@@ -23,9 +23,10 @@ export const getAllTransactions = async (userId) => {
   }
 };
 
-export const cancelTransaction = async (transactionId) => {
+export const cancelTransaction = async (transactionId, userId) => {
   try {
-    const response = await axios.delete(`${API_URL}/cancel_transaction/${transactionId}/${userId}`);
+    console.log(`Annulation transaction: ID=${transactionId}, UserID=${userId}`); // ✅ Debug
+    const response = await axios.put(`${API_URL}/cancel_transaction/${transactionId}/${userId}`);
     return response.data;
   } catch (error) {
     console.error("Erreur lors de l'annulation de la transaction :", error);
