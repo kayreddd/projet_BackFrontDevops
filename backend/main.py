@@ -21,6 +21,7 @@ from showBeneficiaire import addBeneficiaire
 from showBeneficiaire import showBeneficiaire
 from fastapi.middleware.cors import CORSMiddleware
 from showTransaction import router as transaction_router
+from transaction import cancel_transaction
 
 
 app = FastAPI()
@@ -109,9 +110,9 @@ async def create_user_route(user: UserCreate):
     
 
 @app.post("/show_accounts")
-async def get_accounts(id_user):
+async def get_accounts(user: UserRequest):
     # Connexion à la base de données
-    result = showAccount(id_user)
+    result = showAccount(user)
     if "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
 
@@ -185,6 +186,14 @@ async def get_all_transaction(account_id):
 
     return result  # Renvoie le message de succès
 
+@app.delete("/cancel_transaction/{transaction_id}/{id_user}")
+async def delete_transaction(transaction_id: int, id_user: int):
+    result = cancel_transaction(transaction_id, id_user)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    return result  # Renvoie le message de succès
+
 @app.post("/close_account")
 async def get_close_account(account_id):
     # Connexion à la base de données
@@ -217,19 +226,3 @@ async def get_beneficiaire(user: UserRequest):
 
     return result  # Renvoie le message de succès
 
-
-#pour que la fonction ne s'execute que toutes les 10 sec auto
-
-# @app.on_event("startup")
-# async def start_background_task():
-#     asyncio.create_task(run_update_transaction_periodically())
-
-
-# async def run_update_transaction_periodically():
-#     while True:
-#         result = await updateTransaction()  # Appelle la fonction
-#         if "error" in result:
-#             print(f"Erreur : {result['error']}")
-#         else:
-#             print("Mise à jour réussie.")
-#         await asyncio.sleep(10)  # Attends 10 secondes avant de recommencer

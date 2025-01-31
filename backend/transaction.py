@@ -1,6 +1,7 @@
 # ajouter en cours ou non dans dans historique
 
 from pydantic import BaseModel
+from fastapi import HTTPException
 
 import sqlite3
 
@@ -87,17 +88,24 @@ def updateTransaction():
     finally:
         conn.close()
 
-def cancelTransaction(id_transaction):
+def cancel_transaction(transaction_id: int, id_user: int):
+    try:
+        conn = sqlite3.connect("my_database.db")
+        cursor = conn.cursor()
 
-    conn  = sqlite3.connect('my_database.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT type_transaction FROM transaction2 WHERE id = '?'", (id_transaction))
-    transaction = cursor.fetchone()
-    if transaction and transaction[0] == "pending":
-        cursor.execute("UPDATE transaction2 SET type_transaction = ? WHERE id = ?", ("cancel", id_transaction))
-        cursor.execute("UPDATE historic SET etat = ? WHERE id = ?", ("cancel", id_transaction))
-    conn.commit()
-    conn.close()
+        # Vérifier que la transaction appartient bien à cet utilisateur
+        cursor.execute("SELECT id FROM historic WHERE id = ? AND id_user = ?", (transaction_id, id_user))
+        transaction = cursor.fetchone()
 
-    return {"message" : "transaction annulé"}
+        if not transaction:
+            conn.close()
+            raise HTTPException(status_code=404, detail="Transaction non trouvée pour cet utilisateur")
 
+        # Supprimer la transaction
+        cursor.execute("DELETE FROM historic WHERE id = ? AND id_user = ?", (transaction_id, id_user))
+        conn.commit()
+        conn.close()
+
+        return {"message": "Transaction annulée avec succès"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
