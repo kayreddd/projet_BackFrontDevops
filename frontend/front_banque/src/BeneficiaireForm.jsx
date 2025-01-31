@@ -1,13 +1,20 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
+
+
 
 export default function BeneficiaireForm() {
+  const location = useLocation();
+  const idCompte = location.state?.id || "Aucun ID reçu"; // Valeur par défaut si undefined
+  console.log(idCompte);
   const [formData, setFormData] = useState({
     name_beneficiaire: "",
     id_beneficiaire: "",
-    id_user: 1, // Valeur par défaut
+    id_user: idCompte, // Valeur par défaut
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

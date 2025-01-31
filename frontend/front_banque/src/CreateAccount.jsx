@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import du hook useNavigate
 import './Accounts.css';
 
+
 function CreateAccount() {
-  const [money, setMoney] = useState('');
+  
   const [typeDeCompte, setTypeDeCompte] = useState('Principal');
   const [iban, setIban] = useState('');
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const navigate = useNavigate(); // Hook pour la navigation
 
   const handleCreateAccount = async (e) => {
     e.preventDefault();
@@ -14,7 +17,6 @@ function CreateAccount() {
     try {
       // Log avant d'envoyer la requête pour déboguer
       console.log({
-        money,
         type_de_compte: typeDeCompte,
         id_user: 1,
       });
@@ -23,7 +25,6 @@ function CreateAccount() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          money,
           id_user: 1,
           type_de_compte: typeDeCompte,
         }),
@@ -45,7 +46,7 @@ function CreateAccount() {
 
   return (
     <div>
-      <button onClick={() => alert('Un bénéficiaire a été ajouté')}>
+      <button onClick={() => navigate('/beneficiaire', { state: { id: 1 } })}>
         Ajouter un bénéficiaire
       </button>
       <button className="add-account-btn" onClick={() => setShowForm(!showForm)}>
