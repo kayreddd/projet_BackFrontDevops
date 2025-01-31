@@ -55,8 +55,8 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
 
 class CompteCreate(BaseModel):
-    money: int
     id_user: int
+    type_de_compte: str
 
 class UserCreate(BaseModel):
     mail: str

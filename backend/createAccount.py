@@ -29,7 +29,7 @@ def create_account(compte: CompteCreate):
         cursor.execute("""
         INSERT INTO compte (money, id_user, statut_compte, iban) 
         VALUES (?, ?, ?, ?)
-        """, (0, compte.id_user, "compte.type_de_compte", iban))  # Utilisation des données du modèle
+        """, (0, compte.id_user, compte.type_de_compte, iban))  # Utilisation des données du modèle
 
         # Sauvegarder les changements et fermer la connexion
         conn.commit()

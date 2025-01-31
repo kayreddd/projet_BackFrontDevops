@@ -33,7 +33,7 @@ def showAccount(id_user: UserRequest):
             return {"message": "La table 'compte' est vide."}
 
         #Retourner les données sous forme de liste de dictionnaires
-        return {"accounts": [{"id": row[0], "money": row[1], "id_user": row[2], "type_de_compte": row[3], "iban": row[4]} for row in rows]}
+        return {"accounts": [{"id": row[0], "money": row[1], "id_user": row[2], "type_de_compte": row[4], "iban": row[5]} for row in rows]}
     
     
     except sqlite3.DatabaseError as e:

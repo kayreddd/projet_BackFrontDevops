@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';  // Importation d'Axios
 import { useNavigate } from 'react-router-dom'; // Import du hook useNavigate
+import CreateAccount from './CreateAccount';
 import './Accounts.css';  // Importation du CSS
+
 
 
 function Accounts() {
@@ -20,10 +22,12 @@ function Accounts() {
 
         if (response.data && response.data.accounts) {
           // Vérifie la présence des données
+          console.log(response.data.accounts);
           const formattedAccounts = response.data.accounts.map((account) => ({
             id: account.id,
-            type_de_compte: account.type_de_compte,
             money: account.money,
+            id_user: account.id_user,
+            type_de_compte: account.type_de_compte,
             iban: account.iban,
           }));
 
@@ -77,8 +81,13 @@ function Accounts() {
             )}
           </div>
         )}
+        <div className="create-account-section">
+          <h2>Créer un Nouveau Compte</h2>
+          <CreateAccount />
+        </div>
       </main>
     </div>
+    
   );
 }
 
