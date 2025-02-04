@@ -14,7 +14,7 @@ def close_account(account_id):
 
         cursor.execute("SELECT id FROM compte WHERE id = ? and statut_compte = ?", (account_id, "Secondaire"))
         main_account = cursor.fetchone()
-        # Vérifier s'il y a des transactions en cours (hypothèse : vérifier dans la table des transactions)
+        # Vérifier s'il y a des transactions en cours
         cursor.execute("""
             SELECT COUNT(*) 
             FROM transaction2 
@@ -32,7 +32,7 @@ def close_account(account_id):
         # Clôturer le compte (marquer comme clôturé sans le supprimer de la base)
         cursor.execute("UPDATE compte SET money = 0, statut_compte = ? WHERE id = ?", ("closed", account_id,))
 
-        # Sauvegarder les changements et fermer la connexion?
+        # Sauvegarder les changements et fermer la connexion
         conn.commit()
         conn.close()
 

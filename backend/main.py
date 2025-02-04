@@ -2,12 +2,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi import HTTPException
 #import asyncio
-
-
-# # from fastapi.staticfiles import StaticFiles pour le css
-# from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from createAccount import create_account  # Importez la fonction depuis createAccount.py
+from createAccount import create_account
 from createUser import create_user
 from showUser import showUser
 from showAccount import showAccount
@@ -97,8 +93,8 @@ async def create_account_route(compte: CompteCreate):
 @app.post("/create_user")
 async def create_user_route(user: UserCreate):
     try:
-        # Appeler la fonction create_account depuis createAccount.py
-        result = create_user(user)  # On passe l'objet CompteCreate
+        # Appeler la fonction create_user_route depuis createUser.py
+        result = create_user(user)  # On passe l'objet UserCreate
 
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
@@ -131,8 +127,8 @@ async def get_user(id_user):
 @app.post("/add_money")
 async def add_money_route(id_compte, montant):
     try:
-        # Appeler la fonction create_account depuis createAccount.py
-        result = addMoney(id_compte, montant)  # On passe l'objet CompteCreate
+        # Appeler la fonction addMoney depuis addMoney.py
+        result = addMoney(id_compte, montant)  # On passe les paramètre
 
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
@@ -146,8 +142,8 @@ async def add_money_route(id_compte, montant):
 @app.post("/create_transaction")
 async def create_transaction_route(transaction: transactionCreate):
     try:
-        # Appeler la fonction create_account depuis createAccount.py
-        result = create_transaction(transaction)  # On passe l'objet CompteCreate
+        # Appeler la fonction create_transaction depuis transaction.py
+        result = create_transaction(transaction)  # On passe l'objet transactionCreate
 
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
@@ -161,7 +157,6 @@ async def create_transaction_route(transaction: transactionCreate):
 async def update_transaction_route():
     # Connexion à la base de données
     result = updateTransaction()
-        
     if "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
 
@@ -208,7 +203,6 @@ async def get_close_account(account_id):
 async def add_beneficiaire_route(beneficiaire: BeneficiaireCreate):
     try:
         result = addBeneficiaire(beneficiaire)
-
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
 

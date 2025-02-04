@@ -17,11 +17,11 @@ function Accounts() {
       setLoading(true);
       try {
         const response = await axios.post("http://127.0.0.1:8000/show_accounts", {
-          id_user: 1,  // Remplacer par un ID utilisateur valide
+          id_user: 2,  // on remplace par un ID utilisateur valide
         });
 
         if (response.data && response.data.accounts) {
-          // Vérifie la présence des données
+          // Vérification de la présence des données
           console.log(response.data.accounts);
           const formattedAccounts = response.data.accounts.map((account) => ({
             id: account.id,
@@ -31,7 +31,7 @@ function Accounts() {
             iban: account.iban,
           }));
 
-          setAccounts(formattedAccounts);  // Mettre à jour l'état avec les comptes formatés
+          setAccounts(formattedAccounts);  // Mise à jour de l'état avec les comptes formatés
         } else {
           throw new Error("Format de la réponse incorrect");
         }

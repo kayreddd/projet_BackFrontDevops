@@ -93,7 +93,7 @@ def cancel_transaction(transaction_id: int, id_user: int):
         conn = sqlite3.connect("my_database.db")
         cursor = conn.cursor()
 
-        # Vérifier que la transaction appartient bien à cet utilisateur
+        # Vérification que la transaction appartient bien à cet utilisateur
         cursor.execute("SELECT id FROM historic WHERE id = ? AND id_user = ?", (transaction_id, id_user))
         transaction = cursor.fetchone()
 
@@ -101,7 +101,7 @@ def cancel_transaction(transaction_id: int, id_user: int):
             conn.close()
             raise HTTPException(status_code=404, detail="Transaction non trouvée pour cet utilisateur")
 
-        # Mettre à jour l'état de la transaction à "cancel"
+        # Mise à jour l'état de la transaction à "cancel"
         cursor.execute("UPDATE historic SET etat = 'cancel' WHERE id = ? AND id_user = ?", (transaction_id, id_user))
         conn.commit()
         conn.close()

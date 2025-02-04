@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 
 export default function TransactionForm() {
   const [formData, setFormData] = useState({
@@ -10,9 +12,10 @@ export default function TransactionForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [beneficiaires, setBeneficiaires] = useState([]);
+  const location = useLocation();
 
   // Remplace par l'ID de l'utilisateur connecté (ex: stocké dans le state global)
-  const id_user = 1;
+  const id_user = location.state?.id || "Aucun ID reçu";;
 
   useEffect(() => {
     // Récupérer la liste des bénéficiaires de l'utilisateur

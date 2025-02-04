@@ -8,11 +8,10 @@ class BeneficiaireCreate(BaseModel):
 
 def showBeneficiaire(id_user):
     try:
-
         conn = sqlite3.connect("my_database.db")
         cursor = conn.cursor()
 
-        # Récupérer toutes les lignes de la table 'compte'
+        # On recupère toutes les lignes de la table 'beneficiaire'
         cursor.execute("SELECT * FROM beneficiaire WHERE id_beneficiant = ?", (id_user,))
         rows = cursor.fetchall()
         print(rows)

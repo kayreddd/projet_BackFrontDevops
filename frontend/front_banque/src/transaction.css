@@ -26,7 +26,7 @@
     justify-content: space-between;
     width: 100%; /* S'assurer que la case prend toute la place */
     max-width: 800px; /* Limite pour éviter d’être trop large */
-    margin: 0 auto; /* Centrer la transaction horizontalement */
+    margin: 0 auto 20px auto; /* Ajout d'un espace entre chaque transaction */
 }
 
 .icon {

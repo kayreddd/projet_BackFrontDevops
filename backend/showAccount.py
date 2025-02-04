@@ -17,10 +17,10 @@ def showAccount(id_user: UserRequest):
         conn = sqlite3.connect("my_database.db")
         cursor = conn.cursor()
 
-        #Exécution de la requête SQL pour récupérer les comptes
+        # requête SQL pour récupérer les comptes
         logger.debug("Exécution de la requête SQL pour récupérer les comptes...")
 
-        # Récupérer toutes les lignes de la table 'compte'
+        # on récupère toutes les lignes de la table 'compte'
         cursor.execute("SELECT * FROM compte WHERE id_user = ? ORDER BY id DESC", (str(id_user.id_user),))
         rows = cursor.fetchall()
         logger.debug(f"Résultats de la requête: {rows}")
@@ -32,7 +32,7 @@ def showAccount(id_user: UserRequest):
         if not rows:
             return {"message": "La table 'compte' est vide."}
 
-        #Retourner les données sous forme de liste de dictionnaires
+        #on retourne les données sous forme de liste de dictionnaires
         return {"accounts": [{"id": row[0], "money": row[1], "id_user": row[2], "type_de_compte": row[4], "iban": row[5]} for row in rows]}
     
     

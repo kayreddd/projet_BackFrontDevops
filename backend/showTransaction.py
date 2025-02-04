@@ -12,7 +12,7 @@ def showTransaction(transaction_id, user_id):
         conn = sqlite3.connect("my_database.db")
         cursor = conn.cursor()
 
-        # Récupérer toutes les lignes de la table 'compte'
+        # on récupère toutes les lignes de la table 'transaction2'
         cursor.execute("SELECT * FROM transaction2 WHERE id = ? AND (id_sender = ? OR id_receveur = ?)  ",(transaction_id, user_id, user_id))
         rows = cursor.fetchone()
         # Fermer la connexion
@@ -23,7 +23,7 @@ def showTransaction(transaction_id, user_id):
         if not rows:
             return {"message": "Aucune transaction trouvée pour cet utilisateur."}
 
-        # Retourner les données sous forme de liste de dictionnaires
+        # on retourne les données sous forme de liste de dictionnaires
         return {"id":rows[0], "id_sender": rows[1], "id_receveur": rows[2], "type_transaction": rows[3], "valeur_transaction": rows[4], "message": rows[5],"date": rows[6]}
     
     except Exception as e:
@@ -37,7 +37,7 @@ def showAllTransaction(account_id: int):
         conn = sqlite3.connect("my_database.db")
         cursor = conn.cursor()
 
-        # Récupérer toutes les lignes de la table 'compte'
+        # On récupère toutes les lignes de la table 'historic'
         cursor.execute("SELECT * FROM historic WHERE id_user = ?  ",(account_id,))
         rows = cursor.fetchall()
         # Fermer la connexion
@@ -48,7 +48,7 @@ def showAllTransaction(account_id: int):
         if not transactions:
             return {"message": "Aucune transaction trouvée pour cet utilisateur."}
 
-        # Retourner les données sous forme de liste de dictionnaires
+        # On retourne les données sous forme de liste de dictionnaires
         return transactions
 
     except Exception as e:

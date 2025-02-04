@@ -1,12 +1,12 @@
 import sqlite3
 
 # Connexion à la base de données
-conn = sqlite3.connect("my_database.db")  # Remplacez par le nom de votre base de données
+conn = sqlite3.connect("my_database.db")  # on met le nom de notre bdd
 
-# Créer un curseur pour exécuter des commandes SQL
+# curseur pour exécuter des commandes SQL
 cursor = conn.cursor()
 
-# Récupérer toutes les lignes de la table 'compte'
+# on récupère toutes les lignes de la table 'compte'
 try:
     cursor.execute("SELECT * FROM compte")
     rows = cursor.fetchall()  # Récupérer toutes les lignes

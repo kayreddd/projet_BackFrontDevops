@@ -186,6 +186,7 @@ const Transactions = () => {
           <button onClick={undoCancel}>Annuler l'annulation</button>
         </div>
       )}
+      <button onClick={() => navigate('/transaction_form', { state: { id: userId } })}>Ajout transaction</button>
     </div>
   );
 };

@@ -16,6 +16,7 @@ import './Accounts.css'
 function App() {
 
   return (
+    //utilisation de browser Router pour créer nos routes
     <>
     <BrowserRouter>
       <Routes>
